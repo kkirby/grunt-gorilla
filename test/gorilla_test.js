@@ -1,0 +1,161 @@
+var grunt = require('grunt');
+var fs = require('fs');
+
+function readFile(file) {
+  'use strict';
+
+  var contents = grunt.file.read(file);
+
+  if (process.platform === 'win32') {
+    contents = contents.replace(/\r\n/g, '\n');
+  }
+
+  return contents;
+}
+
+function assertFileEquality(test, pathToActual, pathToExpected, message) {
+    var actual = readFile(pathToActual);
+    var expected = readFile(pathToExpected);
+    test.equal(expected, actual, message);
+}
+
+exports.gorilla = {
+  compileBare: function(test) {
+    'use strict';
+
+    test.expect(3);
+
+    assertFileEquality(test,
+      'tmp/bare/hello.js',
+      'test/expected/bare/hello.js',
+      'Should compile GorillaScript to unwrapped JavaSscript');
+
+    assertFileEquality(test,
+      'tmp/bare/loop.js',
+      'test/expected/bare/loop.js',
+      'Should compile GorillaScript to unwrapped JavaSscript');
+
+    assertFileEquality(test,
+      'tmp/bare/joined.js',
+      'test/expected/bare/joined.js',
+      'Should compile GorillaScript files without wrappers and concatenate them into a single JavaScript file');
+
+    test.done();
+  },
+  compileDefault: function(test) {
+    'use strict';
+
+    test.expect(3);
+
+    assertFileEquality(test,
+      'tmp/default/hello.js',
+      'test/expected/default/hello.js',
+      'Should compile GorillaScript to JavaScript');
+
+    assertFileEquality(test,
+      'tmp/default/loop.js',
+      'test/expected/default/loop.js',
+      'Should compile GorillaScript to wrapped JavaScript');
+
+    assertFileEquality(test,
+      'tmp/default/joined.js',
+      'test/expected/default/joined.js',
+      'Should compile GorillaScript files with wrappers and concatenate them into a single JavaScript file');
+
+    test.done();
+  },
+  compileMaps: function(test) {
+    'use strict';
+
+    test.expect(12);
+
+    assertFileEquality(test,
+      'tmp/maps/hello.js',
+      'test/expected/maps/hello.js',
+      'Compilation of single file with source maps should generate JavaScript');
+
+    assertFileEquality(test,
+      'tmp/maps/hello.js.map',
+      'test/expected/maps/hello.js.map',
+      'Compilation of single file with source maps should generate map');
+
+    assertFileEquality(test,
+      'tmp/maps/helloBare.js',
+      'test/expected/maps/helloBare.js',
+      'Bare compilation of single file with source maps should generate JavaScript');
+
+    assertFileEquality(test,
+      'tmp/maps/helloBare.js.map',
+      'test/expected/maps/helloBare.js.map',
+      'Bare compilation of single file with source maps should generate map');
+
+    assertFileEquality(test,
+      'tmp/maps/joined.js',
+      'test/expected/maps/joined.js',
+      'Compilation of multiple files with source maps should generate JavaScript');
+
+    assertFileEquality(test,
+      'tmp/maps/joined.js.map',
+      'test/expected/maps/joined.js.map',
+      'Compilation of multiple files with source maps should generate map');
+
+    assertFileEquality(test,
+      'tmp/maps/joinedBare.js',
+      'test/expected/maps/joinedBare.js',
+      'Bare compilation of multiple files with source maps should generate JavaScript');
+
+    assertFileEquality(test,
+      'tmp/maps/joinedBare.js.map',
+      'test/expected/maps/joinedBare.js.map',
+      'Bare compilation of multiple files with source maps should generate map');
+
+    assertFileEquality(test,
+      'tmp/maps/loop.js',
+      'test/expected/maps/loop.js',
+      'Compilation of single file with source maps should generate JavaScript');
+
+    assertFileEquality(test,
+      'tmp/maps/loop.js.map',
+      'test/expected/maps/loop.js.map',
+      'Compilation of single file with source maps should generate map');
+
+    assertFileEquality(test,
+      'tmp/maps/loopBare.js',
+      'test/expected/maps/loopBare.js',
+      'Bare compilation of single file with source maps should generate JavaScript');
+
+    assertFileEquality(test,
+      'tmp/maps/loopBare.js.map',
+      'test/expected/maps/loopBare.js.map',
+      'Bare compilation of single file with source maps should generate map');
+
+    test.done();
+  },
+  compileEachMap: function(test) {
+    'use strict';
+
+    test.expect(4);
+
+    assertFileEquality(test,
+      'tmp/eachMap/hello.js',
+      'test/expected/eachMap/hello.js',
+      'Separate compilation of GorillaScript files with source maps should generate JavaScript');
+
+    assertFileEquality(test,
+      'tmp/eachMap/hello.js.map',
+      'test/expected/eachMap/hello.js.map',
+      'Separate compilation of GorillaScript files with source maps should generate map');
+
+    assertFileEquality(test,
+      'tmp/eachMap/loop.js',
+      'test/expected/eachMap/loop.js',
+      'Separate compilation of GorillaScript files with source maps should generate JavaScript');
+
+    assertFileEquality(test,
+      'tmp/eachMap/loop.js.map',
+      'test/expected/eachMap/loop.js.map',
+      'Separate compilation of GorillaScript files with source maps should generate map');
+
+    test.done();
+  }
+};
