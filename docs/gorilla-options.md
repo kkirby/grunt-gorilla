@@ -22,3 +22,9 @@ Type: `string`
 Default: `""`
 
 Specify the `sourceRoot` property in the created .map file.
+
+## encoding
+Type: `string`
+Default: `grunt.file.defaultEncoding`, which is `"utf8"` unless overridden.
+
+The encoding of the resultant .js files. Not recommended to change.

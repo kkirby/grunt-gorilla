@@ -68,6 +68,14 @@ module.exports = function(grunt) {
           'tmp/maps/loopBare.js': ['test/fixtures/loop.gs'],
           'tmp/maps/joinedBare.js': ['test/fixtures/hello.gs', 'test/fixtures/loop.gs']
         }
+      },
+      encoding: {
+        options: {
+          encoding: "utf16le"
+        },
+        files: {
+          'tmp/encoding/helloUTF16.js': ['test/fixtures/hello.gs']
+        }
       }
     },
 

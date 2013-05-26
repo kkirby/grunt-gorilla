@@ -294,7 +294,7 @@
     grunt.registerMultiTask("gorilla", "Compile GorillaScript files into JavaScript.", function () {
       var _this, done, options, promise;
       _this = this;
-      options = this.options({ bare: false, sourceMap: null, linefeed: grunt.util.linefeed });
+      options = this.options({ bare: false, sourceMap: null, linefeed: grunt.util.linefeed, encoding: grunt.file.defaultEncoding });
       grunt.verbose.writeflags(options, "Options");
       done = this.async();
       promise = __generatorToPromise((function () {

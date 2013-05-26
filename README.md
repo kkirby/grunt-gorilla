@@ -52,6 +52,12 @@ Default: `""`
 
 Specify the `sourceRoot` property in the created .map file.
 
+#### encoding
+Type: `string`
+Default: `grunt.file.defaultEncoding`, which is `"utf8"` unless overridden.
+
+The encoding of the resultant .js files. Not recommended to change.
+
 ### Usage Examples
 
 ```js
@@ -100,10 +106,12 @@ For more examples on how to use the `expand` API to manipulate the default dynam
 
 ## Release History
 
+ * 2013-05-26   v0.1.2   Add the "encoding" option, defaulting to `grunt.file.default-encoding`
+ * 2013-05-26   v0.1.1   Task is now run asynchronously
  * 2013-05-26   v0.1.0   Initial release
 
 ---
 
 Task submitted by [Cameron Kenneth Knight](http://github.com/ckknight)
 
-*This file was generated on Sun May 26 2013 11:54:32.*
+*This file was generated on Sun May 26 2013 13:20:48.*

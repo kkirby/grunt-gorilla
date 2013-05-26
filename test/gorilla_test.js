@@ -1,16 +1,19 @@
 var grunt = require('grunt');
 var fs = require('fs');
 
-function readFile(file) {
+function fixNewlines(text) {
+  if (process.platform === 'win32') {
+    text = text.replace(/\r\n/g, '\n');
+  }
+  return text;
+}
+
+function readFile(file, options) {
   'use strict';
 
-  var contents = grunt.file.read(file);
+  var contents = grunt.file.read(file, options);
 
-  if (process.platform === 'win32') {
-    contents = contents.replace(/\r\n/g, '\n');
-  }
-
-  return contents;
+  return fixNewlines(contents);
 }
 
 function assertFileEquality(test, pathToActual, pathToExpected, message) {
@@ -156,6 +159,17 @@ exports.gorilla = {
       'test/expected/eachMap/loop.js.map',
       'Separate compilation of GorillaScript files with source maps should generate map');
 
+    test.done();
+  },
+  encoding: function(test) {
+    'use strict';
+    
+    test.expect(1);
+    
+    var actual = fixNewlines(fs.readFileSync('tmp/encoding/helloUTF16.js', 'utf16le'));
+    var expected = readFile('test/expected/default/hello.js');
+    test.equal(expected, actual, "GorillaScript can compile with encoding UTF-16-le");
+    
     test.done();
   }
 };

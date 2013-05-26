@@ -14,6 +14,7 @@ module.exports := #(grunt)
       -bare
       source-map: null
       grunt.util.linefeed
+      encoding: grunt.file.default-encoding
     }
     
     grunt.verbose.writeflags options, "Options"

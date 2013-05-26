@@ -1,3 +1,13 @@
+v0.1.2:
+  date: 2013-05-26
+  changes:
+    - Add the "encoding" option, defaulting to `grunt.file.default-encoding`
+
+v0.1.1:
+  date: 2013-05-26
+  changes:
+    - Task is now run asynchronously
+
 v0.1.0:
   date: 2013-05-26
   changes:
