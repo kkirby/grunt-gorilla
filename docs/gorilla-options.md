@@ -28,3 +28,9 @@ Type: `string`
 Default: `grunt.file.defaultEncoding`, which is `"utf8"` unless overridden.
 
 The encoding of the resultant .js files. Not recommended to change.
+
+## overwrite
+Type: `boolean`
+Default: `false`
+
+Compile and overwrite .js files even if they don't appear to be out-of-date.

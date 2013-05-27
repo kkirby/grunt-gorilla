@@ -1,3 +1,10 @@
+v0.1.3:
+  date: 2013-05-27
+  changes:
+    - Add more logging, and a nice display in verbose mode.
+    - Only compile files if the mtime of the .gs is more than that of its .js
+    - Add the "overwrite" option, to override the "only-compile-when" check.
+
 v0.1.2:
   date: 2013-05-26
   changes:

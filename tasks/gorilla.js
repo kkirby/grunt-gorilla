@@ -1,7 +1,8 @@
 (function (GLOBAL) {
   "use strict";
-  var __defer, __generatorToPromise, __import, __in, __isArray, __owns,
-      __promise, __slice, __strnum, __toArray, __typeof, path, setImmediate;
+  var __defer, __everyPromise, __generatorToPromise, __in, __isArray, __lte,
+      __num, __owns, __promise, __slice, __strnum, __toArray, __toPromise,
+      __typeof, fs, path, setImmediate;
   __defer = (function () {
     function __defer() {
       var deferred, isError, value;
@@ -112,6 +113,47 @@
     };
     return __defer;
   }());
+  __everyPromise = function (promises) {
+    var defer, i, isArray, k, remaining, result, v;
+    if (typeof promises !== "object" || promises === null) {
+      throw TypeError("Expected promises to be an Object, got " + __typeof(promises));
+    }
+    isArray = __isArray(promises);
+    defer = __defer();
+    if (isArray) {
+      result = [];
+    } else {
+      result = {};
+    }
+    remaining = 0;
+    function handle(key, promise) {
+      return promise.then(
+        function (value) {
+          result[key] = value;
+          if (--remaining === 0) {
+            defer.fulfill(result);
+          }
+        },
+        defer.reject
+      );
+    }
+    if (isArray) {
+      i = promises.length;
+      remaining = i;
+      while (i--) {
+        handle(i, promises[i]);
+      }
+    } else {
+      for (k in promises) {
+        if (__owns.call(promises, k)) {
+          v = promises[k];
+          ++remaining;
+          handle(k, v);
+        }
+      }
+    }
+    return defer.promise;
+  };
   __generatorToPromise = function (generator, allowSync) {
     if (typeof generator !== "object" || generator === null) {
       throw TypeError("Expected generator to be an Object, got " + __typeof(generator));
@@ -149,15 +191,6 @@
     }
     return callback(void 0);
   };
-  __import = function (dest, source) {
-    var k;
-    for (k in source) {
-      if (__owns.call(source, k)) {
-        dest[k] = source[k];
-      }
-    }
-    return dest;
-  };
   __in = typeof Array.prototype.indexOf === "function"
     ? (function () {
       var indexOf;
@@ -185,6 +218,24 @@
         return _toString.call(x) === "[object Array]";
       };
     }());
+  __lte = function (x, y) {
+    var type;
+    type = typeof x;
+    if (type !== "number" && type !== "string") {
+      throw TypeError("Cannot compare a non-number/string: " + type);
+    } else if (type !== typeof y) {
+      throw TypeError("Cannot compare elements of different types: " + type + " vs " + typeof y);
+    } else {
+      return x <= y;
+    }
+  };
+  __num = function (num) {
+    if (typeof num !== "number") {
+      throw TypeError("Expected a number, got " + __typeof(num));
+    } else {
+      return num;
+    }
+  };
   __owns = Object.prototype.hasOwnProperty;
   __promise = function (value, allowSync) {
     var factory;
@@ -230,6 +281,23 @@
     } else {
       return __slice.call(x);
     }
+  };
+  __toPromise = function (func, context, args) {
+    var d;
+    if (typeof func !== "function") {
+      throw TypeError("Expected func to be a Function, got " + __typeof(func));
+    }
+    d = __defer();
+    func.apply(context, __toArray(args).concat([
+      function (err, value) {
+        if (err != null) {
+          d.reject(err);
+        } else {
+          d.fulfill(value);
+        }
+      }
+    ]));
+    return d.promise;
   };
   __typeof = (function () {
     var _toString;
@@ -289,47 +357,137 @@
    * Licensed under the MIT license.
    */
   path = require("path");
+  fs = require("fs");
   module.exports = function (grunt) {
-    var compile;
+    var compile, needsCompiling;
     grunt.registerMultiTask("gorilla", "Compile GorillaScript files into JavaScript.", function () {
-      var _this, done, options, promise;
+      var _this, done, options, promise, verbose;
       _this = this;
-      options = this.options({ bare: false, sourceMap: null, linefeed: grunt.util.linefeed, encoding: grunt.file.defaultEncoding });
+      options = this.options({
+        bare: false,
+        sourceMap: null,
+        linefeed: grunt.util.linefeed,
+        encoding: grunt.file.defaultEncoding,
+        verbose: false,
+        overwrite: false
+      });
       grunt.verbose.writeflags(options, "Options");
+      verbose = grunt.option("verbose") || options.verbose;
       done = this.async();
       promise = __generatorToPromise((function () {
-        var _arr, _e, _i, _len, _send, _state, _step, _throw, file, validFiles;
+        var _arr, _e, _i, _len, _ref, _send, _state, _step, _throw, _tmp, file,
+            k, maxNameLength, name, numCompiled, progressCounts, progressTotals,
+            startTime, v, validFiles;
         _state = 0;
         function _close() {
-          _state = 5;
+          _state = 14;
         }
         function _step(_received) {
           while (true) {
             switch (_state) {
             case 0:
+              ++_state;
+              return { done: false, value: require("gorillascript").init() };
+            case 1:
+              maxNameLength = calculateMaxNameLength(_this.files);
+              startTime = Date.now();
+              if (verbose) {
+                grunt.log.write(grunt.util.repeat(maxNameLength, " "));
+                grunt.log.writeln("     parse     macro     reduce    translate compile |   total");
+              }
+              progressTotals = {};
+              numCompiled = 0;
               _arr = __toArray(_this.files);
               _i = 0;
               _len = _arr.length;
               ++_state;
-            case 1:
-              _state = _i < _len ? 2 : 5;
-              break;
             case 2:
-              file = _arr[_i];
-              validFiles = removeInvalidFiles(file);
-              _state = !hasExpectedExtensions(validFiles) ? 4 : 3;
+              _state = _i < _len ? 3 : 13;
               break;
             case 3:
+              file = _arr[_i];
+              validFiles = removeInvalidFiles(file);
+              _state = !hasExpectedExtensions(validFiles) ? 12 : 4;
+              break;
+            case 4:
+              _state = validFiles.length === 0 ? 12 : 5;
+              break;
+            case 5:
+              _tmp = options.overwrite;
+              _state = _tmp ? 8 : 6;
+              break;
+            case 6:
               ++_state;
               return {
                 done: false,
-                value: compile(validFiles, options, file.dest)
+                value: needsCompiling(validFiles, file.dest)
               };
-            case 4:
-              ++_i;
-              _state = 1;
+            case 7:
+              _tmp = _received;
+              ++_state;
+            case 8:
+              _state = _tmp ? 9 : 11;
               break;
-            case 5:
+            case 9:
+              ++_state;
+              return {
+                done: false,
+                value: compile(
+                  validFiles,
+                  options,
+                  file.dest,
+                  maxNameLength,
+                  verbose
+                )
+              };
+            case 10:
+              progressCounts = _received;
+              if (verbose) {
+                for (k in progressCounts) {
+                  if (__owns.call(progressCounts, k)) {
+                    v = progressCounts[k];
+                    if ((_ref = progressTotals[k]) == null) {
+                      progressTotals[k] = 0;
+                    }
+                    progressTotals[k] = __num(progressTotals[k]) + __num(v);
+                  }
+                }
+              }
+              _state = 12;
+              break;
+            case 11:
+              if (verbose) {
+                grunt.log.writeln(__strnum(validFiles.join(", ")) + ": Skipping");
+              } else {
+                grunt.log.writeln("Skipping " + __strnum(validFiles.join(", ")));
+              }
+              ++_state;
+            case 12:
+              ++_i;
+              _state = 2;
+              break;
+            case 13:
+              ++_state;
+              if (verbose && numCompiled > 1) {
+                grunt.log.write(grunt.util.repeat(__num(maxNameLength) + 53, "-"));
+                grunt.log.writeln("+----------");
+                grunt.log.write(grunt.util.repeat(__num(maxNameLength) + 2, " "));
+                for (_arr = [
+                  "parse",
+                  "macroExpand",
+                  "reduce",
+                  "translate",
+                  "compile"
+                ], _i = 0, _len = _arr.length; _i < _len; ++_i) {
+                  name = _arr[_i];
+                  grunt.log.write(" ");
+                  grunt.log.write(padLeft(9, __strnum((__num(progressTotals[name]) / 1000).toFixed(3)) + " s"));
+                }
+                grunt.log.write(" | ");
+                grunt.log.writeln(padLeft(9, __strnum(((Date.now() - startTime) / 1000).toFixed(3)) + " s"));
+              }
+              ++_state;
+            case 14:
               return { done: true, value: void 0 };
             default: throw Error("Unknown state: " + _state);
             }
@@ -371,6 +529,147 @@
         }
       );
     });
+    needsCompiling = __promise(function (inputs, output) {
+      var _arr, _arr2, _arr3, _arr4, _arr5, _arr6, _arr7, _e, _err, _i, _len,
+          _send, _state, _step, _throw, _tmp, gorillaMtimeP, inputStatP,
+          inputStatsP, outputStat, outputStatP;
+      _state = 0;
+      function _close() {
+        _state = 16;
+      }
+      function _step(_received) {
+        while (true) {
+          switch (_state) {
+          case 0:
+            inputStatsP = __everyPromise((function () {
+              var _arr4, _arr8, _i, _len, input;
+              for (_arr4 = [], _arr8 = __toArray(inputs), _i = 0, _len = _arr8.length; _i < _len; ++_i) {
+                input = _arr8[_i];
+                _arr4.push(__toPromise(fs.stat, fs, [input]));
+              }
+              return _arr4;
+            }()));
+            outputStatP = __toPromise(fs.stat, fs, [output]);
+            gorillaMtimeP = require("gorillascript").getMtime();
+            ++_state;
+          case 1:
+            ++_state;
+            return { done: false, value: outputStatP };
+          case 2:
+            outputStat = _received;
+            _state = 4;
+            break;
+          case 3:
+            _state = 16;
+            return { done: true, value: true };
+          case 4:
+            _arr = [];
+            ++_state;
+            return { done: false, value: gorillaMtimeP };
+          case 5:
+            _tmp = _received;
+            _arr.push(_tmp.getTime.call(_tmp));
+            ++_state;
+            return { done: false, value: outputStatP };
+          case 6:
+            _tmp = _received;
+            _tmp = _tmp.mtime;
+            _arr.push(_tmp.getTime.call(_tmp));
+            _tmp = !__lte.apply(void 0, _arr);
+            _state = _tmp ? 7 : 8;
+            break;
+          case 7:
+            _state = 16;
+            return { done: true, value: true };
+          case 8:
+            _arr4 = __toArray(inputStatsP);
+            _i = 0;
+            _len = _arr4.length;
+            ++_state;
+          case 9:
+            _state = _i < _len ? 10 : 15;
+            break;
+          case 10:
+            inputStatP = _arr4[_i];
+            _arr5 = [];
+            ++_state;
+            return { done: false, value: inputStatP };
+          case 11:
+            _tmp = _received;
+            _tmp = _tmp.mtime;
+            _arr5.push(_tmp.getTime.call(_tmp));
+            ++_state;
+            return { done: false, value: outputStatP };
+          case 12:
+            _tmp = _received;
+            _tmp = _tmp.mtime;
+            _arr5.push(_tmp.getTime.call(_tmp));
+            _tmp = !__lte.apply(void 0, _arr5);
+            _state = _tmp ? 13 : 14;
+            break;
+          case 13:
+            _state = 16;
+            return { done: true, value: true };
+          case 14:
+            ++_i;
+            _state = 9;
+            break;
+          case 15:
+            ++_state;
+            return { done: true, value: false };
+          case 16:
+            return { done: true, value: void 0 };
+          default: throw Error("Unknown state: " + _state);
+          }
+        }
+      }
+      function _throw(_e) {
+        if (_state === 1 || _state === 2) {
+          _err = _e;
+          _state = 3;
+        } else {
+          _close();
+          throw _e;
+        }
+      }
+      function _send(_received) {
+        while (true) {
+          try {
+            return _step(_received);
+          } catch (_e) {
+            _throw(_e);
+          }
+        }
+      }
+      return {
+        close: _close,
+        iterator: function () {
+          return this;
+        },
+        next: function () {
+          return _send(void 0);
+        },
+        send: _send,
+        "throw": function (_e) {
+          _throw(_e);
+          return _send(void 0);
+        }
+      };
+    });
+    function calculateMaxNameLength(fileses) {
+      var _arr, _arr2, _i, _i2, _len, _len2, _ref, file, files, maxNameLength;
+      maxNameLength = 0;
+      for (_arr = __toArray(fileses), _i = 0, _len = _arr.length; _i < _len; ++_i) {
+        files = _arr[_i];
+        for (_arr2 = __toArray(files.src), _i2 = 0, _len2 = _arr2.length; _i2 < _len2; ++_i2) {
+          file = _arr2[_i2];
+          if (maxNameLength < __num(_ref = file.length)) {
+            maxNameLength = _ref;
+          }
+        }
+      }
+      return maxNameLength;
+    }
     function removeInvalidFiles(files) {
       var _arr, _arr2, _i, _len, filepath;
       for (_arr = [], _arr2 = __toArray(files.src), _i = 0, _len = _arr2.length; _i < _len; ++_i) {
@@ -383,33 +682,86 @@
       }
       return _arr;
     }
-    compile = __promise(function (files, options, dest) {
-      var _e, _ref, _send, _state, _step, _throw, compileOptions, destDir, e;
+    function padRight(desiredLength, text) {
+      if (typeof desiredLength !== "number") {
+        throw TypeError("Expected desiredLength to be a Number, got " + __typeof(desiredLength));
+      }
+      if (typeof text !== "string") {
+        throw TypeError("Expected text to be a String, got " + __typeof(text));
+      }
+      if (text.length < desiredLength) {
+        return text + __strnum(grunt.util.repeat(desiredLength - text.length, " "));
+      } else {
+        return text;
+      }
+    }
+    function padLeft(desiredLength, text) {
+      if (typeof desiredLength !== "number") {
+        throw TypeError("Expected desiredLength to be a Number, got " + __typeof(desiredLength));
+      }
+      if (typeof text !== "string") {
+        throw TypeError("Expected text to be a String, got " + __typeof(text));
+      }
+      if (text.length < desiredLength) {
+        return __strnum(grunt.util.repeat(desiredLength - text.length, " ")) + text;
+      } else {
+        return text;
+      }
+    }
+    compile = __promise(function (files, options, dest, maxNameLength, verbose) {
+      var _e, _ref, _send, _state, _step, _throw, compileOptions, destDir, e,
+          gorilla, numSpaces, progressCounts, startTime;
       _state = 0;
       function _close() {
-        _state = 3;
+        _state = 5;
       }
       function _step(_received) {
         while (true) {
           switch (_state) {
           case 0:
             destDir = path.dirname(dest);
-            (_ref = __import({}, options)).input = files;
-            _ref.output = dest;
-            if (options.sourceMap) {
-              _ref.sourceMap = {
-                file: path.join(destDir, __strnum(path.basename(dest, path.extname(dest))) + ".js.map"),
-                sourceRoot: options.sourceRoot || ""
-              };
-            } else {
-              _ref.sourceMap = null;
-            }
-            compileOptions = _ref;
+            compileOptions = {
+              input: files,
+              output: dest,
+              encoding: options.encoding,
+              linefeed: options.linefeed,
+              bare: options.bare,
+              sourceMap: options.sourceMap
+                ? {
+                  file: path.join(destDir, __strnum(path.basename(dest, path.extname(dest))) + ".js.map"),
+                  sourceRoot: options.sourceRoot || ""
+                }
+                : null
+            };
+            gorilla = require("gorillascript");
             ++_state;
+            return { done: false, value: gorilla.init() };
           case 1:
-            _state = 3;
-            return { done: false, value: require("gorillascript").compileFile(compileOptions) };
+            startTime = Date.now();
+            progressCounts = {};
+            if (!verbose) {
+              grunt.log.write("Compiling " + __strnum(files.join(", ")) + " ...");
+            } else {
+              if (__num(files.length) > 1) {
+                grunt.log.write(files.join(", "));
+                grunt.log.writeln(": ");
+                grunt.log.write(grunt.util.repeat(__num(maxNameLength) + 2, " "));
+              } else {
+                grunt.log.write(padRight(__num(maxNameLength) + 1, __strnum(files[0]) + ":"));
+                grunt.log.write(" ");
+              }
+              compileOptions.progress = function (name, time) {
+                grunt.log.write(" ");
+                grunt.log.write(padLeft(9, __strnum((__num(time) / 1000).toFixed(3)) + " s"));
+                return progressCounts[name] = time;
+              };
+            }
+            ++_state;
           case 2:
+            _state = 4;
+            return { done: false, value: gorilla.compileFile(compileOptions) };
+          case 3:
+            grunt.log.writeln();
             if (typeof e === "undefined" || e === null || e.line == null || e.column == null) {
               grunt.log.error("Got an unexpected exception from the gorillascript compiler. The original exception was: " + String(typeof e !== "undefined" && e !== null && e.stack || e));
             } else {
@@ -417,16 +769,33 @@
             }
             grunt.fail.warn("GorillaScript failed to compile.");
             ++_state;
-          case 3:
+          case 4:
+            if (!verbose) {
+              if ((_ref = __num(maxNameLength) - __num(files.join(", ").length)) < 60) {
+                numSpaces = _ref;
+              } else {
+                numSpaces = 60;
+              }
+              if (numSpaces > 0) {
+                grunt.log.write(grunt.util.repeat(numSpaces, " "));
+              }
+              grunt.log.write(" ");
+            } else {
+              grunt.log.write(" | ");
+            }
+            grunt.log.writeln(padLeft(9, __strnum(((Date.now() - startTime) / 1000).toFixed(3)) + " s"));
+            ++_state;
+            return { done: true, value: progressCounts };
+          case 5:
             return { done: true, value: void 0 };
           default: throw Error("Unknown state: " + _state);
           }
         }
       }
       function _throw(_e) {
-        if (_state === 1) {
+        if (_state === 2) {
           e = _e;
-          _state = 2;
+          _state = 3;
         } else {
           _close();
           throw _e;

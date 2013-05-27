@@ -58,6 +58,12 @@ Default: `grunt.file.defaultEncoding`, which is `"utf8"` unless overridden.
 
 The encoding of the resultant .js files. Not recommended to change.
 
+#### overwrite
+Type: `boolean`
+Default: `false`
+
+Compile and overwrite .js files even if they don't appear to be out-of-date.
+
 ### Usage Examples
 
 ```js
@@ -106,6 +112,7 @@ For more examples on how to use the `expand` API to manipulate the default dynam
 
 ## Release History
 
+ * 2013-05-27   v0.1.3   Add more logging, and a nice display in verbose mode. Only compile files if the mtime of the .gs is more than that of its .js Add the "overwrite" option, to override the "only-compile-when" check.
  * 2013-05-26   v0.1.2   Add the "encoding" option, defaulting to `grunt.file.default-encoding`
  * 2013-05-26   v0.1.1   Task is now run asynchronously
  * 2013-05-26   v0.1.0   Initial release
@@ -114,4 +121,4 @@ For more examples on how to use the `expand` API to manipulate the default dynam
 
 Task submitted by [Cameron Kenneth Knight](http://github.com/ckknight)
 
-*This file was generated on Sun May 26 2013 13:20:48.*
+*This file was generated on Mon May 27 2013 07:48:12.*

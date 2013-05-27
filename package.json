@@ -1,7 +1,7 @@
 {
   "name": "grunt-gorilla",
   "description": "Compile GorillaScript files to JavaScript.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "homepage": "https://github.com/ckknight/grunt-gorilla",
   "author": {
     "name": "Cameron Kenneth Knight",
@@ -28,7 +28,7 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "gorillascript": "~0.7.23"
+    "gorillascript": "~0.7.24"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

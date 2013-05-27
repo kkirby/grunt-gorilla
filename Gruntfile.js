@@ -19,6 +19,11 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     gorilla: {
+      task: {
+        files: {
+          'tasks/gorilla.js': ['tasks/gorilla.gs']
+        }
+      },
       compileDefault: {
         files: {
           'tmp/default/hello.js': ['test/fixtures/hello.gs'],
