@@ -42,6 +42,7 @@ module.exports := #(grunt)
           continue
         
         if options.overwrite or yield needs-compiling valid-files, file.dest
+          num-compiled += 1
           let progress-counts = yield compile valid-files, options, file.dest, max-name-length, verbose
           if verbose
             for k, v of progress-counts
@@ -68,7 +69,7 @@ module.exports := #(grunt)
         done(false))
   
   let needs-compiling = promise! #(inputs, output)*
-    let input-stats-p = every-promise! (for input in inputs; to-promise! fs.stat input)
+    let input-stats-p = for input in inputs; to-promise! fs.stat input
     let output-stat-p = to-promise! fs.stat output
     let gorilla-mtime-p = require('gorillascript').get-mtime()
     let output-stat = try

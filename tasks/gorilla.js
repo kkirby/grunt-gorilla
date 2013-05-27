@@ -1,8 +1,8 @@
 (function (GLOBAL) {
   "use strict";
-  var __defer, __everyPromise, __generatorToPromise, __in, __isArray, __lte,
-      __num, __owns, __promise, __slice, __strnum, __toArray, __toPromise,
-      __typeof, fs, path, setImmediate;
+  var __defer, __generatorToPromise, __in, __isArray, __lte, __num, __owns,
+      __promise, __slice, __strnum, __toArray, __toPromise, __typeof, fs, path,
+      setImmediate;
   __defer = (function () {
     function __defer() {
       var deferred, isError, value;
@@ -113,47 +113,6 @@
     };
     return __defer;
   }());
-  __everyPromise = function (promises) {
-    var defer, i, isArray, k, remaining, result, v;
-    if (typeof promises !== "object" || promises === null) {
-      throw TypeError("Expected promises to be an Object, got " + __typeof(promises));
-    }
-    isArray = __isArray(promises);
-    defer = __defer();
-    if (isArray) {
-      result = [];
-    } else {
-      result = {};
-    }
-    remaining = 0;
-    function handle(key, promise) {
-      return promise.then(
-        function (value) {
-          result[key] = value;
-          if (--remaining === 0) {
-            defer.fulfill(result);
-          }
-        },
-        defer.reject
-      );
-    }
-    if (isArray) {
-      i = promises.length;
-      remaining = i;
-      while (i--) {
-        handle(i, promises[i]);
-      }
-    } else {
-      for (k in promises) {
-        if (__owns.call(promises, k)) {
-          v = promises[k];
-          ++remaining;
-          handle(k, v);
-        }
-      }
-    }
-    return defer.promise;
-  };
   __generatorToPromise = function (generator, allowSync) {
     if (typeof generator !== "object" || generator === null) {
       throw TypeError("Expected generator to be an Object, got " + __typeof(generator));
@@ -429,6 +388,7 @@
               _state = _tmp ? 9 : 11;
               break;
             case 9:
+              ++numCompiled;
               ++_state;
               return {
                 done: false,
@@ -530,8 +490,8 @@
       );
     });
     needsCompiling = __promise(function (inputs, output) {
-      var _arr, _arr2, _arr3, _arr4, _arr5, _arr6, _arr7, _e, _err, _i, _len,
-          _send, _state, _step, _throw, _tmp, gorillaMtimeP, inputStatP,
+      var _arr, _arr2, _arr3, _arr4, _arr5, _arr6, _e, _err, _i, _len, _send,
+          _state, _step, _throw, _tmp, gorillaMtimeP, input, inputStatP,
           inputStatsP, outputStat, outputStatP;
       _state = 0;
       function _close() {
@@ -541,14 +501,11 @@
         while (true) {
           switch (_state) {
           case 0:
-            inputStatsP = __everyPromise((function () {
-              var _arr4, _arr8, _i, _len, input;
-              for (_arr4 = [], _arr8 = __toArray(inputs), _i = 0, _len = _arr8.length; _i < _len; ++_i) {
-                input = _arr8[_i];
-                _arr4.push(__toPromise(fs.stat, fs, [input]));
-              }
-              return _arr4;
-            }()));
+            for (_arr = [], _arr2 = __toArray(inputs), _i = 0, _len = _arr2.length; _i < _len; ++_i) {
+              input = _arr2[_i];
+              _arr.push(__toPromise(fs.stat, fs, [input]));
+            }
+            inputStatsP = _arr;
             outputStatP = __toPromise(fs.stat, fs, [output]);
             gorillaMtimeP = require("gorillascript").getMtime();
             ++_state;
@@ -582,29 +539,28 @@
             _state = 16;
             return { done: true, value: true };
           case 8:
-            _arr4 = __toArray(inputStatsP);
             _i = 0;
-            _len = _arr4.length;
+            _len = inputStatsP.length;
             ++_state;
           case 9:
             _state = _i < _len ? 10 : 15;
             break;
           case 10:
-            inputStatP = _arr4[_i];
-            _arr5 = [];
+            inputStatP = inputStatsP[_i];
+            _arr4 = [];
             ++_state;
             return { done: false, value: inputStatP };
           case 11:
             _tmp = _received;
             _tmp = _tmp.mtime;
-            _arr5.push(_tmp.getTime.call(_tmp));
+            _arr4.push(_tmp.getTime.call(_tmp));
             ++_state;
             return { done: false, value: outputStatP };
           case 12:
             _tmp = _received;
             _tmp = _tmp.mtime;
-            _arr5.push(_tmp.getTime.call(_tmp));
-            _tmp = !__lte.apply(void 0, _arr5);
+            _arr4.push(_tmp.getTime.call(_tmp));
+            _tmp = !__lte.apply(void 0, _arr4);
             _state = _tmp ? 13 : 14;
             break;
           case 13:
