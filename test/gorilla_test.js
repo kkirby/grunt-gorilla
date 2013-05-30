@@ -67,6 +67,28 @@ exports.gorilla = {
 
     test.done();
   },
+  compileCoverage: function(test) {
+    'use strict';
+
+    test.expect(3);
+
+    assertFileEquality(test,
+      'tmp/coverage/hello.js',
+      'test/expected/coverage/hello.js',
+      'Should compile GorillaScript to JavaScript with _$jscoverage support');
+
+    assertFileEquality(test,
+      'tmp/coverage/loop.js',
+      'test/expected/coverage/loop.js',
+      'Should compile GorillaScript to wrapped JavaScript with _$jscoverage support');
+
+    assertFileEquality(test,
+      'tmp/coverage/joined.js',
+      'test/expected/coverage/joined.js',
+      'Should compile GorillaScript files with wrappers and concatenate them into a single JavaScript file with _$jscoverage support');
+
+    test.done();
+  },
   compileMaps: function(test) {
     'use strict';
 
@@ -131,6 +153,43 @@ exports.gorilla = {
       'tmp/maps/loopBare.js.map',
       'test/expected/maps/loopBare.js.map',
       'Bare compilation of single file with source maps should generate map');
+
+    test.done();
+  },
+  compileCoverageMaps: function(test) {
+    'use strict';
+
+    test.expect(6);
+
+    assertFileEquality(test,
+      'tmp/coverageMaps/hello.js',
+      'test/expected/coverageMaps/hello.js',
+      'Compilation of single file with source maps should generate JavaScript with _$jscoverage support');
+
+    assertFileEquality(test,
+      'tmp/coverageMaps/hello.js.map',
+      'test/expected/coverageMaps/hello.js.map',
+      'Compilation of single file with source maps should generate map');
+
+    assertFileEquality(test,
+      'tmp/coverageMaps/joined.js',
+      'test/expected/coverageMaps/joined.js',
+      'Compilation of multiple files with source maps should generate JavaScript with _$jscoverage support');
+
+    assertFileEquality(test,
+      'tmp/coverageMaps/joined.js.map',
+      'test/expected/coverageMaps/joined.js.map',
+      'Compilation of multiple files with source maps should generate map');
+
+    assertFileEquality(test,
+      'tmp/coverageMaps/loop.js',
+      'test/expected/coverageMaps/loop.js',
+      'Compilation of single file with source maps should generate JavaScript with _$jscoverage support');
+
+    assertFileEquality(test,
+      'tmp/coverageMaps/loop.js.map',
+      'test/expected/coverageMaps/loop.js.map',
+      'Compilation of single file with source maps should generate map');
 
     test.done();
   },

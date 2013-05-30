@@ -41,6 +41,16 @@ module.exports = function(grunt) {
           'tmp/bare/joined.js': ['test/fixtures/hello.gs', 'test/fixtures/loop.gs']
         }
       },
+      compileCoverage: {
+        options: {
+          coverage: true
+        },
+        files: {
+          'tmp/coverage/hello.js': ['test/fixtures/hello.gs'],
+          'tmp/coverage/loop.js': ['test/fixtures/loop.gs'],
+          'tmp/coverage/joined.js': ['test/fixtures/hello.gs', 'test/fixtures/loop.gs']
+        }
+      },
       compileMaps: {
         options: {
           sourceMap: true
@@ -72,6 +82,17 @@ module.exports = function(grunt) {
           'tmp/maps/helloBare.js': ['test/fixtures/hello.gs'],
           'tmp/maps/loopBare.js': ['test/fixtures/loop.gs'],
           'tmp/maps/joinedBare.js': ['test/fixtures/hello.gs', 'test/fixtures/loop.gs']
+        }
+      },
+      compileCoverageMaps: {
+        options: {
+          sourceMap: true,
+          coverage: true
+        },
+        files: {
+          'tmp/coverageMaps/hello.js': ['test/fixtures/hello.gs'],
+          'tmp/coverageMaps/loop.js': ['test/fixtures/loop.gs'],
+          'tmp/coverageMaps/joined.js': ['test/fixtures/hello.gs', 'test/fixtures/loop.gs']
         }
       },
       encoding: {

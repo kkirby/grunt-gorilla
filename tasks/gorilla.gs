@@ -18,6 +18,7 @@ module.exports := #(grunt)
       encoding: grunt.file.default-encoding
       -verbose
       -overwrite
+      -coverage
     }
     
     grunt.verbose.writeflags options, "Options"
@@ -118,6 +119,7 @@ module.exports := #(grunt)
       options.encoding
       options.linefeed
       options.bare
+      options.coverage
       source-map: if options.source-map
         {
           file: path.join dest-dir, "$(path.basename dest, path.extname dest).js.map"

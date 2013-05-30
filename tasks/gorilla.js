@@ -237,8 +237,10 @@
       return x;
     } else if (typeof x === "string") {
       return x.split("");
-    } else {
+    } else if (typeof x.length === "number") {
       return __slice.call(x);
+    } else {
+      throw TypeError("Expected an object with a length property, got " + __typeof(x));
     }
   };
   __toPromise = function (func, context, args) {
@@ -318,7 +320,7 @@
   path = require("path");
   fs = require("fs");
   module.exports = function (grunt) {
-    var compile, needsCompiling;
+    var compile, hasExpectedExtensions, needsCompiling;
     grunt.registerMultiTask("gorilla", "Compile GorillaScript files into JavaScript.", function () {
       var _this, done, options, promise, verbose;
       _this = this;
@@ -328,7 +330,8 @@
         linefeed: grunt.util.linefeed,
         encoding: grunt.file.defaultEncoding,
         verbose: false,
-        overwrite: false
+        overwrite: false,
+        coverage: false
       });
       grunt.verbose.writeflags(options, "Options");
       verbose = grunt.option("verbose") || options.verbose;
@@ -339,7 +342,7 @@
             startTime, v, validFiles;
         _state = 0;
         function _close() {
-          _state = 14;
+          _state = 15;
         }
         function _step(_received) {
           while (true) {
@@ -427,27 +430,30 @@
               _state = 2;
               break;
             case 13:
-              ++_state;
-              if (verbose && numCompiled > 1) {
-                grunt.log.write(grunt.util.repeat(__num(maxNameLength) + 53, "-"));
-                grunt.log.writeln("+----------");
-                grunt.log.write(grunt.util.repeat(__num(maxNameLength) + 2, " "));
-                for (_arr = [
-                  "parse",
-                  "macroExpand",
-                  "reduce",
-                  "translate",
-                  "compile"
-                ], _i = 0, _len = _arr.length; _i < _len; ++_i) {
-                  name = _arr[_i];
-                  grunt.log.write(" ");
-                  grunt.log.write(padLeft(9, __strnum((__num(progressTotals[name]) / 1000).toFixed(3)) + " s"));
-                }
-                grunt.log.write(" | ");
-                grunt.log.writeln(padLeft(9, __strnum(((Date.now() - startTime) / 1000).toFixed(3)) + " s"));
-              }
-              ++_state;
+              _state = verbose && numCompiled > 1 ? 14 : 15;
+              break;
             case 14:
+              grunt.log.write(grunt.util.repeat(__num(maxNameLength) + 53, "-"));
+              grunt.log.writeln("+----------");
+              grunt.log.write(grunt.util.repeat(__num(maxNameLength) + 2, " "));
+              for (_arr = [
+                "parse",
+                "macroExpand",
+                "reduce",
+                "translate",
+                "compile"
+              ], _i = 0, _len = _arr.length; _i < _len; ++_i) {
+                name = _arr[_i];
+                grunt.log.write(" ");
+                grunt.log.write(padLeft(9, __strnum((__num(progressTotals[name]) / 1000).toFixed(3)) + " s"));
+              }
+              grunt.log.write(" | ");
+              ++_state;
+              return {
+                done: true,
+                value: grunt.log.writeln(padLeft(9, __strnum(((Date.now() - startTime) / 1000).toFixed(3)) + " s"))
+              };
+            case 15:
               return { done: true, value: void 0 };
             default: throw Error("Unknown state: " + _state);
             }
@@ -682,6 +688,7 @@
               encoding: options.encoding,
               linefeed: options.linefeed,
               bare: options.bare,
+              coverage: options.coverage,
               sourceMap: options.sourceMap
                 ? {
                   file: path.join(destDir, __strnum(path.basename(dest, path.extname(dest))) + ".js.map"),
@@ -781,7 +788,7 @@
         }
       };
     });
-    function hasExpectedExtensions(files) {
+    return hasExpectedExtensions = function (files) {
       var _arr, _i, _len, badExtensions, ext, file;
       badExtensions = [];
       for (_arr = __toArray(files), _i = 0, _len = _arr.length; _i < _len; ++_i) {
@@ -797,7 +804,6 @@
       } else {
         return true;
       }
-    }
-    return hasExpectedExtensions;
+    };
   };
 }.call(this, typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : this));

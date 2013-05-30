@@ -64,6 +64,12 @@ Default: `false`
 
 Compile and overwrite .js files even if they don't appear to be out-of-date.
 
+#### coverage
+Type: `boolean`
+Default: `false`
+
+Instruments output .js files with `_$jscoverage` support.
+
 ### Usage Examples
 
 ```js
@@ -122,4 +128,4 @@ For more examples on how to use the `expand` API to manipulate the default dynam
 
 Task submitted by [Cameron Kenneth Knight](http://github.com/ckknight)
 
-*This file was generated on Mon May 27 2013 09:13:41.*
+*This file was generated on Wed May 29 2013 19:26:48.*

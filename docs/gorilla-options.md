@@ -34,3 +34,9 @@ Type: `boolean`
 Default: `false`
 
 Compile and overwrite .js files even if they don't appear to be out-of-date.
+
+## coverage
+Type: `boolean`
+Default: `false`
+
+Instruments output .js files with `_$jscoverage` support.
