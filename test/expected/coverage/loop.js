@@ -27,16 +27,17 @@ if (!_$jscoverage["test/fixtures/loop.gs"]) {
   (function () {
     var cov, i, lines;
     _$jscoverage["test/fixtures/loop.gs"] = cov = [];
-    for (i = 0, lines = [1, 2, 3]; i < 3; ++i) {
+    for (i = 0, lines = [1, 2]; i < 2; ++i) {
       cov[lines[i]] = 0;
     }
     cov.source = ["for x in [1, 2, 3, 4, 5]", "  console.log x", ""];
   }());
 }
-(++_$jscoverage["test/fixtures/loop.gs"][3], function () {
+++_$jscoverage["test/fixtures/loop.gs"][1];
+(function () {
   "use strict";
   var _arr, _i, _len, x;
-  for (++_$jscoverage["test/fixtures/loop.gs"][1], _arr = [
+  for (_arr = [
     1,
     2,
     3,
@@ -47,4 +48,4 @@ if (!_$jscoverage["test/fixtures/loop.gs"]) {
     ++_$jscoverage["test/fixtures/loop.gs"][2];
     console.log(x);
   }
-}).call(this);
+}.call(this));

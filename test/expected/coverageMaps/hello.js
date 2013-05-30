@@ -33,10 +33,11 @@ if (!_$jscoverage["test/fixtures/hello.gs"]) {
     cov.source = ['console.log "Hello, world!"', ""];
   }());
 }
-(++_$jscoverage["test/fixtures/hello.gs"][1], function () {
+++_$jscoverage["test/fixtures/hello.gs"][1];
+(function () {
   "use strict";
   console.log("Hello, world!");
-}).call(this);
+}.call(this));
 
 /*
 //@ sourceMappingURL=hello.js.map

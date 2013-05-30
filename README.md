@@ -118,6 +118,7 @@ For more examples on how to use the `expand` API to manipulate the default dynam
 
 ## Release History
 
+ * 2013-05-29   v0.1.5   Add the "coverage" option
  * 2013-05-27   v0.1.4   Bugfix with the needs-compiling check
  * 2013-05-27   v0.1.3   Add more logging, and a nice display in verbose mode. Only compile files if the mtime of the .gs is more than that of its .js Add the "overwrite" option, to override the "only-compile-when" check.
  * 2013-05-26   v0.1.2   Add the "encoding" option, defaulting to `grunt.file.default-encoding`
@@ -128,4 +129,4 @@ For more examples on how to use the `expand` API to manipulate the default dynam
 
 Task submitted by [Cameron Kenneth Knight](http://github.com/ckknight)
 
-*This file was generated on Wed May 29 2013 19:26:48.*
+*This file was generated on Wed May 29 2013 23:52:26.*

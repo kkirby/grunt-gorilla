@@ -58,8 +58,9 @@ if (!_$jscoverage["test/fixtures/loop.gs"]) {
       3,
       4,
       5
-    ], ++_$jscoverage["test/fixtures/loop.gs"][2], _i = 0, _len = _arr.length; _i < _len; ++_i) {
+    ], _i = 0, _len = _arr.length; _i < _len; ++_i) {
       x = _arr[_i];
+      ++_$jscoverage["test/fixtures/loop.gs"][2];
       console.log(x);
     }
   }());

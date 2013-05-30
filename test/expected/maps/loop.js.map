@@ -1,1 +1,1 @@
-{"version":3,"file":"loop.js","sources":["../../test/fixtures/loop.gs"],"names":[],"mappings":"CAE60jD,CAAA;;;EAAA,KAF50jD,OAAQ;GAAE;GAAG;GAAG;GAAG;GAAG;KAAtB,AAEkm3C,KAA7rF,GAFr6xC,AAEq52C,OAFr52C,AAEq62C,aAFr62C,AAE2t4C,KAF3t4C,MAEqv4C,EAFrv4C;GAAG,AAEs6hD,IAFz6hD,AAEyl2C,KAFzl2C;GACA,YAAc;;QAC8zjD"}
+{"version":3,"file":"loop.js","sources":["../../test/fixtures/loop.gs"],"names":[],"mappings":"CAAC,CAAA;;;EAAA,KAAA,OAAQ;GAAE;GAAG;GAAG;GAAG;GAAG;KAAtB,KAAA,GAAA,OAAA,aAAA,KAAA,MAAA,EAAA;GAAA,AAAG,IAAH,KAAA;GACA,YAAc;;QADd"}
