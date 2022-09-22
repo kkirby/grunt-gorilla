@@ -1,5 +1,5 @@
 {
-  "name": "grunt-gorilla",
+  "name": "@kkirbatski/grunt-gorilla",
   "description": "Compile GorillaScript files to JavaScript.",
   "version": "0.1.6",
   "homepage": "https://github.com/ckknight/grunt-gorilla",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/ckknight/grunt-gorilla.git"
+    "url": "git://github.com/kkirby/grunt-gorilla.git"
   },
   "bugs": {
-    "url": "https://github.com/ckknight/grunt-gorilla/issues"
+    "url": "https://github.com/kkirby/grunt-gorilla/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/ckknight/grunt-gorilla/blob/master/LICENSE-MIT"
+      "url": "https://github.com/kkirby/grunt-gorilla/blob/master/LICENSE-MIT"
     }
   ],
   "main": "Gruntfile.js",
@@ -28,7 +28,7 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "gorillascript": "~0.8.13"
+    "gorillascript-community": "*"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

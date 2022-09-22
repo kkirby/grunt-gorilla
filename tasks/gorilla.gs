@@ -26,8 +26,8 @@ module.exports := #(grunt)
     let verbose = grunt.option('verbose') or options.verbose
     
     let done = @async()
-    let promise = promise!
-      yield require('gorillascript').init()
+    let promise = async!
+      await require('gorillascript-community').init()
       let max-name-length = calculate-max-name-length @files
       let start-time = Date.now()
       if verbose
@@ -42,9 +42,9 @@ module.exports := #(grunt)
         if valid-files.length == 0
           continue
         
-        if options.overwrite or yield needs-compiling valid-files, file.dest
+        if options.overwrite or await needs-compiling valid-files, file.dest
           num-compiled += 1
-          let progress-counts = yield compile valid-files, options, file.dest, max-name-length, verbose
+          let progress-counts = await compile valid-files, options, file.dest, max-name-length, verbose
           if verbose
             for k, v of progress-counts
               progress-totals[k] ?= 0
@@ -69,18 +69,18 @@ module.exports := #(grunt)
         grunt.log.error "Got an unexpected exception: $(String(e?.stack or e))"
         done(false))
   
-  let needs-compiling = promise! #(inputs, output)*
+  let needs-compiling = #(inputs, output)**
     let input-stats-p = for input in inputs; to-promise! fs.stat input
     let output-stat-p = to-promise! fs.stat output
-    let gorilla-mtime-p = require('gorillascript').get-mtime()
+    let gorilla-mtime-p = require('gorillascript-community').get-mtime()
     let output-stat = try
-      yield output-stat-p
+      await output-stat-p
     catch
       return true
-    if (yield gorilla-mtime-p).get-time() > (yield output-stat-p).mtime.get-time()
+    if ((await gorilla-mtime-p).get-time()) > (await output-stat-p).mtime.get-time()
       return true
     for input-stat-p in input-stats-p
-      if (yield input-stat-p).mtime.get-time() > (yield output-stat-p).mtime.get-time()
+      if ((await input-stat-p).mtime.get-time()) > (await output-stat-p).mtime.get-time()
         return true
     false
   
@@ -111,7 +111,7 @@ module.exports := #(grunt)
     else
       text
   
-  let compile = promise! #(files, options, dest, max-name-length, verbose)*
+  let compile = #(files, options, dest, max-name-length, verbose)**
     let dest-dir = path.dirname dest
     let compile-options = {
       input: files
@@ -128,8 +128,8 @@ module.exports := #(grunt)
       else
         null
     }
-    let gorilla = require('gorillascript')
-    yield gorilla.init()
+    let gorilla = require('gorillascript-community')
+    await gorilla.init()
     let start-time = Date.now()
     let progress-counts = {}
     if not verbose
@@ -147,7 +147,7 @@ module.exports := #(grunt)
         grunt.log.write pad-left 9, (time / 1000_ms).to-fixed(3) & " s"
         progress-counts[name] := time
     try
-      yield gorilla.compile-file compile-options
+      await gorilla.compile-file compile-options
     catch e
       grunt.log.writeln()
       if not e? or not e.line? or not e.column?
