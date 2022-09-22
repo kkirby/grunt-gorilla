@@ -1,7 +1,7 @@
 {
   "name": "@kkirbatski/grunt-gorilla",
   "description": "Compile GorillaScript files to JavaScript.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/kkirby/grunt-gorilla",
   "publishConfig": {
     "access": "public"
