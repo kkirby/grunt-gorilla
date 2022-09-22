@@ -1,8 +1,11 @@
 {
   "name": "@kkirbatski/grunt-gorilla",
   "description": "Compile GorillaScript files to JavaScript.",
-  "version": "0.1.6",
-  "homepage": "https://github.com/ckknight/grunt-gorilla",
+  "version": "0.2.0",
+  "homepage": "https://github.com/kkirby/grunt-gorilla",
+  "publishConfig": {
+    "access": "public"
+  },
   "author": {
     "name": "Cameron Kenneth Knight",
     "email": "ckknight@gmail.com"
